@@ -53,7 +53,7 @@
                     <a href="https://chiyukiruon.com" target="_blank">ChiyukiRuon</a>&nbsp;|&nbsp;
                 </span>
                 <span class="footer-text">
-                    <a href="https://github.com/ChiyukiRuon/score-detail" target="_blank">Github</a>
+                    <a href="https://github.com/ChiyukiRuon/hziee-score-detail" target="_blank">Github</a>
                 </span>
             </div>
         </el-footer>
