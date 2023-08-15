@@ -78,6 +78,13 @@
         <div>A:若这门课不是三个成绩,其它的则可能是验收成绩,实践成绩等,请结合实际课程具体情况具体分析</div>
         <div class="question">Q:为什么我没办法展开除了当前学期以外的别的学期的成绩</div>
         <div>A:手机浏览器访问可能会出现这种情况，遇到这种情况可以尝试刷新页面</div>
+        <div class="question">Q:这是如何实现的</div>
+        <div>
+            A:可以看看
+            <a href="https://github.com/ChiyukiRuon/hziee-score-detail/" target="_blank" style="color: #409eff">Github</a>
+            的源代码或者看看
+            <a href="https://chiyukiruon.com/2023/08/15/hziee-score-detail/" target="_blank" style="color: #409eff">这篇博客</a>
+        </div>
         <el-divider />
         <el-text
             size="large"
