@@ -55,6 +55,17 @@ export function isPass(score) {
 }
 
 /**
+ * 判断是否为小屏
+ *
+ * @param {Number} screenWidth 窗口宽度
+ * @return {Boolean} 当前窗口宽度是否小于给定的值
+ * @author ChiyukiRuon
+ * */
+export function isMobile(screenWidth) {
+    return window.innerWidth < screenWidth
+}
+
+/**
  * 计算通过的学科数
  *
  * @param {Array} list 成绩列表
@@ -64,11 +75,8 @@ export function isPass(score) {
 export function passNum(list) {
     let num = 0
     for (let i in list) {
-        for (let j in list[i]) {
-            const score = list[i]
-            if (isFinalScore(score, parseInt(j)) && isPass(score[j])) {
-                num += 1
-            }
+        if (list[i].isPass) {
+            num++
         }
     }
 
@@ -95,10 +103,6 @@ export function base64ToString(base64String) {
         return
     }
 
-    ElMessage.success('提取成功')
-
-    this.normalString = normalString
-
     return normalString
 }
 
@@ -110,14 +114,12 @@ export function base64ToString(base64String) {
  * @author ChiyukiRuon
  * */
 export  function siftString(string) {
-    let text = this.base64ToString(string)
     const regex = /[\u4e00-\u9fa5a-zA-Z0-9\-()（）.+\s]+(?=dd)/g;
-    const result = text.match(regex).map(str => str.replace(/dd$/, ''));
+    const result = string.match(regex).map(str => str.replace(/dd$/, ''));
 
-    // console.log(result);
-    this.splitCourse(result)
+    splitCourse(result)
 
-    return result
+    return splitCourse(result)
 }
 
 /**
@@ -150,7 +152,56 @@ export function splitCourse(courseList) {
         result.push(currentSection);
     }
 
-    this.resultList = result
+    // this.resultList = formatResultData(result)
 
-    return result;
+    // console.log(result)
+    return formatResultData(result);
+}
+
+/**
+ * 格式化成绩数据
+ *
+ * @param {Array} courseList 按课程分割好的成绩列表
+ * @return {Array} 格式化后的成绩列表
+ * @author ChiyukiRuon
+ * */
+export function formatResultData(courseList) {
+    const resultList = []
+    for (let i = 1;i < courseList.length;i++) {
+        const item = {}
+        const assessmentScore = []
+        for (let j = 0;j < courseList[i].length;j++) {
+            let courseListItem = courseList[i]
+            if (j === 0) {
+                item.courseId = courseListItem[j]
+            }
+            if (j === 4) {
+                item.courseName = courseListItem[j].trimStart().replace(/^\d/g, "")
+            }
+            if (isCredits(courseListItem[j]) && j > 4) {
+                item.credits = courseListItem[j].trimStart()
+            }
+            if (j > 6 && courseListItem[j] !== 'd' && !isCredits(courseListItem[j])) {
+                if (isFinalScore(courseListItem, j)) {
+                    item.finalScore = courseListItem[j].trimStart()
+                    item.isPass = isPass(courseListItem[j])
+                }else if (isCredits(courseListItem[j-1])) {
+                    item.performanceScore = courseListItem[j].trimStart()
+                }else {
+                    if (courseListItem[j] === '是') {
+                        item.isRenovate = courseListItem[j] === '是'
+                    }else if (courseListItem[j].match(/(学院|学部)/)) {
+                        item.college = courseListItem[j].trimStart()
+                    }else {
+                        assessmentScore.push(courseListItem[j].trimStart())
+                    }
+                }
+            }
+        }
+        item.assessmentScore = assessmentScore
+        resultList.push(item)
+    }
+
+    // console.log(resultList)
+    return resultList
 }

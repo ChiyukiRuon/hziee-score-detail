@@ -1,7 +1,6 @@
 <template>
     <el-collapse v-model="semesterValue">
         <template v-for="(score, index) in scoreList" :key="index">
-            <!-- TODO 在未展开界面显示成绩概览 -->
             <el-collapse-item
                 :name="`${score.semester}-${score.term}`"
                 :ref="`${score.semester}-${score.term}`"

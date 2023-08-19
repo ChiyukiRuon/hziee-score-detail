@@ -36,7 +36,7 @@
                     <el-link
                         type="primary"
                         :underline="false"
-                        @click.prevent="changeTipVisible"
+                        @click.prevent="changeExplainVisible"
                         style="padding-left: 15px"
                     >说明</el-link>
                 </el-form-item>
@@ -66,45 +66,12 @@
 
     <el-backtop :right="50" :bottom="60" />
 
-    <el-dialog v-model="showTip" title="说明">
-        <el-text
-            size="large"
-            type="primary"
-            style="font-weight: bold"
-        >常见问题 Q&A</el-text>
-        <div class="question">Q:应该怎么看成绩</div>
-        <div>A:一般有三个成绩,按顺序分别为平时分,卷面分以及最终成绩</div>
-        <div class="question">Q:为什么除了平时分,卷面分,最终成绩还有别的成绩</div>
-        <div>A:若这门课不是三个成绩,其它的则可能是验收成绩,实践成绩等,请结合实际课程具体情况具体分析</div>
-        <div class="question">Q:为什么我没办法展开除了当前学期以外的别的学期的成绩</div>
-        <div>A:手机浏览器访问可能会出现这种情况，遇到这种情况可以尝试刷新页面</div>
-        <div class="question">Q:这是如何实现的</div>
-        <div>
-            A:可以看看
-            <a href="https://github.com/ChiyukiRuon/hziee-score-detail/" target="_blank" style="color: #409eff">Github</a>
-            的源代码或者看看
-            <a href="https://chiyukiruon.com/2023/08/15/hziee-score-detail/" target="_blank" style="color: #409eff">这篇博客</a>
-        </div>
-        <el-divider />
-        <el-text
-            size="large"
-            type="primary"
-            style="font-weight: bold"
-        >免责声明 Disclaimer</el-text>
-        <div>· 该项目不是杭州电子科技大学信息工程学院官方的项目，不代表杭州电子科技大学信息工程学院官方的任何立场和态度</div>
-        <div>· 最终的考试成绩以教务系统为准，本项目仅供参考</div>
-        <div>· 友情链接:
-            <a href="https://www.hziee.edu.cn/" target="_blank" style="color: #409eff">杭州电子科技大学信息工程学院</a>
-        </div>
-        <el-divider />
-        <el-text
-            size="large"
-            type="primary"
-            style="font-weight: bold"
-        >反馈 Feedback</el-text>
-        <div>在使用本站的过程中遇到问题您可以:</div>
-        <div>· 到本项目的Github页面<a href="https://github.com/ChiyukiRuon/hziee-score-detail/issues" target="_blank" style="color: #409eff">提出Issues</a></div>
-        <div>· 联系<b>support@chiyukiruon.top</b>说明您的问题</div>
+    <el-dialog v-model="showDesktopExplain" title="说明">
+        <explain-text />
+    </el-dialog>
+
+    <el-dialog v-model="showMobileExplain" title="说明" :fullscreen="true">
+        <explain-text />
     </el-dialog>
 </template>
 
@@ -116,6 +83,7 @@
     import {ElMessage, ElNotification} from "element-plus";
     import AfterLoginView from "@/views/AfterLoginView.vue";
     import packageJson from "../package.json"
+    import ExplainText from "@/components/ExplainText.vue";
 
     // 显示Cookie提示
     const disclaimer = () => {
@@ -143,7 +111,7 @@
     }
 
     export default {
-        components: {AfterLoginView, NoLoginView},
+        components: {ExplainText, AfterLoginView, NoLoginView},
         setup() {
             const isLoading = ref(false)
             const isLogin = ref(false)
@@ -203,7 +171,8 @@
             return {
                 uid: '',
                 pwd: '',
-                showTip: false,
+                showDesktopExplain: false,
+                showMobileExplain: false,
             }
         },
         methods: {
@@ -240,8 +209,13 @@
              * @return {void}
              * @author ChiyukiRuon
              * */
-            changeTipVisible() {
-                this.showTip = !this.showTip
+            changeExplainVisible() {
+                const screenWidth = Number(window.innerWidth)
+                if (screenWidth < 500) {
+                    this.showMobileExplain = !this.showMobileExplain
+                }else {
+                    this.showDesktopExplain = !this.showDesktopExplain
+                }
             },
 
             /**
@@ -291,7 +265,6 @@
             }
 
             // 版权及版本信息
-            const VERSION = packageJson.version
             console.log("   _____ _     _             _    _ \n" +
                 "  / ____| |   (_)           | |  (_)\n" +
                 " | |    | |__  _ _   _ _   _| | ___ \n" +
@@ -300,8 +273,9 @@
                 "  \\_____|_| |_|_|\\__, |\\__,_|_|\\_\\_|\n" +
                 "                  __/ |             \n" +
                 "                 |___/              \n" +
-                "score-detail-v" + VERSION + "\n" +
-                "ChiyukiRuon@https://chiyukiruon.com")
+                `${packageJson.name}-v${packageJson.version}` + "\n" +
+                "Copyright©ChiyukiRuon" + "\n" +
+                "https://chiyukiruon.com")
         }
     }
 </script>
@@ -325,5 +299,11 @@
 .question {
     font-weight: bold;
     margin-top: 10px;
+}
+
+@media (max-width: 400px) {
+    .dialog {
+        width: 100%;
+    }
 }
 </style>
