@@ -85,6 +85,18 @@
     import packageJson from "../package.json"
     import ExplainText from "@/components/ExplainText.vue";
 
+    // 暂停维护说明
+    const notice = () => {
+        ElNotification({
+            title: '重要说明',
+            message: '<div>由于学校教务现在需要内网访问，以及在登录时添加了验证码，我对此暂时没有比较好的解决方案，本项目将暂停维护。</div>' +
+                '<div>作为代替，我编写了一个油猴插件用于查看详细成绩:<a style="color: #409eff" href="https://greasyfork.org/zh-CN/scripts/477379-%E6%9D%AD%E7%94%B5%E4%BF%A1%E5%B7%A5%E6%95%99%E5%8A%A1%E6%88%90%E7%BB%A9%E5%88%86%E6%9E%90" target="_blank">前往下载</a></div>',
+            dangerouslyUseHTMLString: true,
+            type: 'error',
+            duration: 0,
+        })
+    }
+
     // 显示Cookie提示
     const disclaimer = () => {
         ElNotification({
@@ -92,7 +104,7 @@
             message: '<div>该项目不是杭州电子科技大学信息工程学院官方的项目，不代表杭州电子科技大学信息工程学院官方的任何立场和态度.</div>' +
                 '<div>最终的考试成绩以教务系统为准，本项目仅供参考.</div>',
             dangerouslyUseHTMLString: true,
-            type: 'warning',
+            type: 'info',
             duration: 0,
             position: 'bottom-right',
         })
@@ -104,7 +116,7 @@
             title: 'Cookie使用',
             message: '在您使用<b>登录教务自动获取成绩</b>的功能时,本网站会将您的<b>学号</b>及<b>密码</b>以Cookie形式保存在本地',
             dangerouslyUseHTMLString: true,
-            type: 'warning',
+            type: 'info',
             duration: 4500,
             position: 'bottom-right',
         })
@@ -249,6 +261,7 @@
             },
         },
         mounted() {
+            notice()
             // 判断是否存有Cookie
             if (Cookies.get('uid') !== undefined && Cookies.get('pwd') !== undefined) {
                 this.uid = Cookies.get('uid')
